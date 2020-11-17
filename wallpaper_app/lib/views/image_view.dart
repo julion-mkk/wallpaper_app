@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -46,7 +47,8 @@ class ImageViewState extends State<ImageView> {
                             children: <Widget>[
                                 InkWell(
                                     onTap: () {
-                                        _saved();
+                                        flushBar(context);
+
                                     },
                                     child: Stack(
                                         children: [
@@ -77,7 +79,7 @@ class ImageViewState extends State<ImageView> {
                                                 child: Column(
                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
-                                                        Text('Set Wallpaper', style: TextStyle(
+                                                        Text('Save Image', style: TextStyle(
                                                             color: Colors.white70,
                                                             fontSize: 15,
                                                             fontWeight: FontWeight.w500,
@@ -107,7 +109,7 @@ class ImageViewState extends State<ImageView> {
                                         fontSize: 16
                                     ),),
                                 ),
-                                SizedBox(height: 50,)
+                                SizedBox(height: 50,),
                             ],
 
                         ),
@@ -122,9 +124,10 @@ class ImageViewState extends State<ImageView> {
         await _askedPermission();
         var response = await Dio().get(widget.imageUrl,
             options: Options(responseType: ResponseType.bytes));
-        loading =
+        final result =
         await ImageGallerySaver.saveImage(Uint8List.fromList(response.data));
-        print('result haps : $loading');
+        //Scaffold.of(context).showSnackBar(SnackBar(content: Text("Image is saved"),));
+        print('result haps : $result');
         Navigator.pop(context);
     }
 
@@ -134,5 +137,14 @@ class ImageViewState extends State<ImageView> {
         } else {
             await PermissionHandler().requestPermissions([PermissionGroup.storage]);
         }
+    }
+
+    flushBar(BuildContext context) {
+        _saved();
+        Flushbar(
+            message: "Image is saved",
+            duration: Duration(seconds: 3),
+            flushbarPosition: FlushbarPosition.BOTTOM,
+        )..show(context);
     }
 }

@@ -5,6 +5,7 @@ import 'package:wallpaper_app/models/photoModel.dart';
 import 'package:wallpaper_app/views/image_view.dart';
 Widget brandName() {
     return Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
